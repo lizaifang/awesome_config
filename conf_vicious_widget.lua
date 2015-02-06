@@ -41,7 +41,7 @@ separator:set_image(beautiful.widget_sep)
 --batwidget:set_gradient_colors({ "#AECF96", "#88A175", "#FF5656" })
 --vicious.register(batwidget, vicious.widgets.bat, "$1$2%", 61, "BAT1")
 batwidget = wibox.widget.textbox()
-vicious.register(batwidget, vicious.widgets.bat, "$1$2%", 61, "BAT1")
+vicious.register(batwidget, vicious.widgets.bat, "$1$2%", 61, "BAT0")
 -- }}}
 
 -- {{{ CPU usage and temperature
@@ -83,8 +83,8 @@ netwidget = wibox.widget.textbox()
 --    .. beautiful.fg_netdn_widget ..'">${wlan0 down_kb}</span> <span color="'
 --    .. beautiful.fg_netup_widget ..'">${wlan0 up_kb}</span>', 3)
 vicious.register(netwidget, vicious.widgets.net, '<span color="'
-    .. "#FF5656" ..'">${wlan0 down_kb}</span> <span color="'
-    .. "#88A175" ..'">${wlan0 up_kb}</span>', 3)
+    .. "#FF5656" ..'">${wlp3s0 down_kb}</span> <span color="'
+    .. "#88A175" ..'">${wlp3s0 up_kb}</span>', 3)
 -- }}}
 
 -- {{{ DiskIO usage
