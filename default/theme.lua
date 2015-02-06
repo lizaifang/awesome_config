@@ -83,7 +83,9 @@ theme.titlebar_maximized_button_focus_active  = theme.confdir .. "/default/title
 -- theme.wallpaper_cmd = { "awsetbg /home/37.jpg" }
 -- theme.wallpaper = "/home/37.jpg"
 -- theme.wallpaper = "/home/lizf/Downloads/wallpaper-2467601.png"
-theme.wallpaper = "/home/lizf/Downloads/misaka_mikoto_by_ifics-d2zt0fb.png"
+-- theme.wallpaper = "/home/lizf/Downloads/misaka_mikoto_by_ifics-d2zt0fb.png"
+-- theme.wallpaper = "/home/shot0003.png"
+theme.wallpaper = "/home/Misaka-Mikoto-desktopsky-90999.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh      = theme.confdir .. "/default/layouts/fairh.png"
