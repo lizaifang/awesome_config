@@ -87,7 +87,8 @@ theme.titlebar_maximized_button_focus_active  = theme.confdir .. "/default/title
 -- theme.wallpaper = "/home/shot0003.png"
 -- theme.wallpaper = "/home/Misaka-Mikoto-desktopsky-90999.jpg"
 -- theme.wallpaper = "/home/lizf/Downloads/rect5399.png"
-theme.wallpaper = "/home/lizf/Pictures/login-background-1920.0DqnS.jpg"
+-- theme.wallpaper = "/home/lizf/Pictures/Bing/RainierMilkyWay_ZH-CN9404321904_1920x1080.jpg"
+theme.wallpaper = "/home/lizf/.cache/himawaripy/latest.png"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh      = theme.confdir .. "/default/layouts/fairh.png"
