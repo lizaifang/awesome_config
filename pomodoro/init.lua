@@ -2,7 +2,7 @@
 
 local widget    = widget
 local image     = image
-local timer     = timer
+local timer     = gears.timer
 local awful     = require("awful")
 awful.util      = require("awful.util")
 local wibox     = require("wibox")

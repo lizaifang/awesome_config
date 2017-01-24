@@ -126,7 +126,7 @@ myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
    { "config", editor_cmd .. " " .. awful.util.getdir("config") .. "/rc.lua" },
    { "restart", awesome.restart },
-   { "quit", awesome.quit }
+   { "quit", function() awesome.quit() end }
 }
 
 menu_freq = {
@@ -236,7 +236,7 @@ else
 end
 bar_width = beautiful.get_font_height(theme.font) * 1.5
 
-myteststatusbar2 = awful.wibox({screen=main_screen, position = "right", align = "center", ontop = true, width=bar_width})
+myteststatusbar2 = awful.wibar({screen=main_screen, position = "right", align = "center", ontop = true, width=bar_width})
 a = wibox.layout.align.vertical()
 b = wibox.layout.fixed.vertical()
 b2 = wibox.layout.fixed.vertical()
@@ -289,7 +289,7 @@ for s = 1, screen.count() do
     --     end
     -- })
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "top", screen = s})
+    mywibox[s] = awful.wibar({ position = "top", screen = s})
     -- Add widgets to the wibox - order matters
 
     local left_layout = wibox.layout.fixed.horizontal()
@@ -567,6 +567,7 @@ for i = 1, keynumber do
                   function ()
                       if client.focus and tags[client.focus.screen][i] then
                           awful.client.movetotag(tags[client.focus.screen][i])
+			  client.focus:move_to_tag(client.focus.screen.tags[i])
                           -- awful.client.movetoscreen()
                       end
                   end),
