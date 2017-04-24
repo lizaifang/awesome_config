@@ -494,7 +494,7 @@ function widget.new(args)
             width = width,
             height = height,
         })
-        mywibox:set_widget(pages[1])
+        mywibox:set_widget(columns)
         mywibox:buttons(gtable.join(awful.button({}, 1, function() mywibox.visible = false end),
             awful.button({}, 3, function() mywibox.visible = false end)))
 
