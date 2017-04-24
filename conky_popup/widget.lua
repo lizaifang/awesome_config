@@ -266,42 +266,42 @@ function widget.new(args)
                 current_column = { layout = wibox.layout.fixed.vertical() }
             end
             --            current_column.layout:add(self:_group_label(group))
-
-            local function insert_keys(_keys, _add_new_column)
-                local max_label_width = 0
-                local max_label_content = ""
-                local joined_labels = ""
-                for i, key in ipairs(_keys) do
-                    local length = string.len(key.key or '') + string.len(key.description or '')
-                    local modifiers = key.mod
-                    if not modifiers or modifiers == "none" then
-                        modifiers = ""
-                    else
-                        length = length + string.len(modifiers) + 1 -- +1 for "+" character
-                        modifiers = markup.fg(self.modifiers_fg, modifiers .. "+")
-                    end
-                    local rendered_hotkey = markup.font(self.font,
-                        modifiers .. (key.key or "") .. " ") .. markup.font(self.description_font,
-                        key.description or "")
-                    if length > max_label_width then
-                        max_label_width = length
-                        max_label_content = rendered_hotkey
-                    end
-                    joined_labels = joined_labels .. rendered_hotkey .. (i ~= #_keys and "\n" or "")
-                end
-                current_column.layout:add(wibox.widget.textbox(joined_labels))
-                local max_width, _ = wibox.widget.textbox(max_label_content):get_preferred_size(s)
-                max_width = max_width + self.group_margin
-                if not current_column.max_width or max_width > current_column.max_width then
-                    current_column.max_width = max_width
-                end
-                -- +1 for group label:
-                current_column.height_px = (current_column.height_px or 0) +
-                        gstring.linecount(joined_labels) * line_height + group_label_height
-                if _add_new_column then
-                    table.insert(column_layouts, current_column)
-                end
-            end
+--
+--            local function insert_keys(_keys, _add_new_column)
+--                local max_label_width = 0
+--                local max_label_content = ""
+--                local joined_labels = ""
+--                for i, key in ipairs(_keys) do
+--                    local length = string.len(key.key or '') + string.len(key.description or '')
+--                    local modifiers = key.mod
+--                    if not modifiers or modifiers == "none" then
+--                        modifiers = ""
+--                    else
+--                        length = length + string.len(modifiers) + 1 -- +1 for "+" character
+--                        modifiers = markup.fg(self.modifiers_fg, modifiers .. "+")
+--                    end
+--                    local rendered_hotkey = markup.font(self.font,
+--                        modifiers .. (key.key or "") .. " ") .. markup.font(self.description_font,
+--                        key.description or "")
+--                    if length > max_label_width then
+--                        max_label_width = length
+--                        max_label_content = rendered_hotkey
+--                    end
+--                    joined_labels = joined_labels .. rendered_hotkey .. (i ~= #_keys and "\n" or "")
+--                end
+--                current_column.layout:add(wibox.widget.textbox(joined_labels))
+--                local max_width, _ = wibox.widget.textbox(max_label_content):get_preferred_size(s)
+--                max_width = max_width + self.group_margin
+--                if not current_column.max_width or max_width > current_column.max_width then
+--                    current_column.max_width = max_width
+--                end
+--                -- +1 for group label:
+--                current_column.height_px = (current_column.height_px or 0) +
+--                        gstring.linecount(joined_labels) * line_height + group_label_height
+--                if _add_new_column then
+--                    table.insert(column_layouts, current_column)
+--                end
+--            end
 
             --            insert_keys(keys, add_new_column)
             --            if overlap_leftovers then
@@ -408,27 +408,19 @@ function widget.new(args)
                 .. "#88A175" .. '">${sda read_kb}</span>', 3)
 
         datewidget = wibox.widget.textbox()
-        vicious.register(datewidget, vicious.widgets.date, " %a  %Y-%m-%d %H:%M ", 5)
+        vicious.register(datewidget, vicious.widgets.date, '<span color="#D7D3C5"> %a  %Y-%m-%d %H:%M </span>', 5)
 
-        --- ${time %Y-%m-%d  %w}
-        --- ${color D7D3C5}${time  %H:%M}
-        --- ${color}|Up:${color D7D3C5}
-        --- ${uptime_short}
-        --- ${color}|Kernel:
-        --- ${color D7D3C5}$kernel
+        --- ${color}|Up:${color D7D3C5}  ${uptime_short}
+        --- ${color}|Kernel:  ${color D7D3C5}$kernel
         --- ${color D7D3C5}$acpitemp 'C
 
-        --- ${color}|Load:
-        --- ${color D7D3C5}$loadavg
-        --- ${color}|Processes:${color D7D3C5}
-        --- $running_processes|$processes
+        --- ${color}|Load: ${color D7D3C5}   $loadavg
+        --- ${color}|Processes:${color D7D3C5}  $running_processes|$processes
         --- ${color}|Cpu: ${color D7D3C5}
         --- ${cpu cpu0}%   ${cpu cpu1}%  ${cpu cpu2}%   ${cpu cpu3}%
         --- ${color}${cpugraph cpu0 13,36 AEA08E 9F907D} ${color}${cpugraph cpu2 13,36 AEA08E 9F907D}
         --- ${color}${cpugraph cpu1 13,36 AEA08E 9F907D} ${color}${cpugraph cpu3 13,36 AEA08E 9F907D}
-        --- ${color}|Mem: ${color D7D3C5}
-        --- $mem $memperc%
-        --- ${color}${membar 2,64}${color D7D3C5}
+        --- ${color}|Mem: ${color D7D3C5} $mem $memperc% ${color}${membar 2,64}${color D7D3C5}
         --- ${battery_percent BAT0}% ${battery_bar 2,64 BAT0}
 
         --- ${if_existing /proc/net/route wlp3s0}${color}|up: ${color D7D3C5}
