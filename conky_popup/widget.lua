@@ -356,8 +356,21 @@ function widget.new(args)
         --volicon:set_image(beautiful.widget_vol)
         orgicon = wibox.widget.imagebox()
         orgicon:set_image(beautiful.widget_org)
+
+
+
         dateicon = wibox.widget.imagebox()
         dateicon:set_image(beautiful.widget_date)
+        dateicon = wibox.widget {
+            image  = beautiful.widget_date,
+            resize = false,
+            resize_allowed = false,
+            forced_height = 16,
+            forced_widget = 16,
+            widget = wibox.widget.imagebox
+        }
+
+
         cryptoicon = wibox.widget.imagebox()
         cryptoicon:set_image(beautiful.widget_crypto)
         separator = wibox.widget.imagebox()
@@ -366,23 +379,31 @@ function widget.new(args)
         dateicon:set_image(beautiful.widget_date)
 
         netwidget = wibox.widget.textbox()
-        vicious.register(netwidget, vicious.widgets.net, '<span color="'
-                .. "#FF5656" .. '">${wlp3s0 down_kb}</span> <span color="'
-                .. "#88A175" .. '">${wlp3s0 up_kb}</span>', 3)
+        vicious.register(netwidget, vicious.widgets.net, 'wlp3s0 rx: <span color="'
+                .. "#FF5656" .. '">${wlp3s0 down_kb}/s</span> wlp3s0 tx: <span color="'
+                .. "#88A175" .. '">${wlp3s0 up_kb}/s</span>', 3)
 
 
+        --- 1st value as state of requested battery
+        --- 2nd as charge level in percent
+        --- 3rd as remaining (charging or discharging) time
+        --- 4th as the wear level in percent and 5th value for the present dis-/charge rate in Watt.
         batwidget = wibox.widget.textbox()
-        vicious.register(batwidget, vicious.widgets.bat, "$1$2%", 61, "BAT0")
+        vicious.register(batwidget, vicious.widgets.bat, "bat: $1 $2%", 61, "BAT0")
 
+        --- 1st value as usage of all CPUs/cores
+        --- 2nd as usage of first CPU/core
+        --- 3rd as usage of second CPU/core etc.
         --- cpuwidget = wibox.widget.textbox()
         --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
         cpuwidget = wibox.widget {
-            max_value = 29,
+            max_value = 100,
             step_width = 3,
             step_spacing = 1,
             step_shape = function(cr, width, height)
                 gears.shape.rounded_rect(cr, width, height, 2)
             end,
+            direction     = 'east',
             widget = wibox.widget.graph
         }
         vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
@@ -398,51 +419,72 @@ function widget.new(args)
         --- 7th as total system swap
         --- 8th as free swap and 9th as memory usage with buffers and cache
         vicious.register(memwidget, vicious.widgets.mem, "mem:$1% used:$2MB", 13)
-        memrow = wibox.layout.fixed.vertical()
-        --- memrow:add(memicon)
-        memrow:add(memwidget)
+
 
         diowidget = wibox.widget.textbox()
-        vicious.register(diowidget, vicious.widgets.dio, '<span color="'
-                .. "#FF5656" .. '">${sda write_kb}</span> <span color="'
-                .. "#88A175" .. '">${sda read_kb}</span>', 3)
+        vicious.register(diowidget, vicious.widgets.dio, 'sda w: <span color="'
+                .. "#FF5656" .. '">${sda write_kb}/s</span> sda r: <span color="'
+                .. "#88A175" .. '">${sda read_kb}/s</span>', 3)
 
         datewidget = wibox.widget.textbox()
         vicious.register(datewidget, vicious.widgets.date, '<span color="#D7D3C5"> %a  %Y-%m-%d %H:%M </span>', 5)
 
+        memrow = wibox.layout.flex.vertical()
+        memrow:add(datewidget)
         --- ${color}|Up:${color D7D3C5}  ${uptime_short}
         --- ${color}|Kernel:  ${color D7D3C5}$kernel
         --- ${color D7D3C5}$acpitemp 'C
-
         --- ${color}|Load: ${color D7D3C5}   $loadavg
         --- ${color}|Processes:${color D7D3C5}  $running_processes|$processes
-        --- ${color}|Cpu: ${color D7D3C5}
+        memrow:add(cpuwidget)
         --- ${cpu cpu0}%   ${cpu cpu1}%  ${cpu cpu2}%   ${cpu cpu3}%
         --- ${color}${cpugraph cpu0 13,36 AEA08E 9F907D} ${color}${cpugraph cpu2 13,36 AEA08E 9F907D}
         --- ${color}${cpugraph cpu1 13,36 AEA08E 9F907D} ${color}${cpugraph cpu3 13,36 AEA08E 9F907D}
+        memrow:add(memwidget)
         --- ${color}|Mem: ${color D7D3C5} $mem $memperc% ${color}${membar 2,64}${color D7D3C5}
+
+        memrow:add(batwidget)
         --- ${battery_percent BAT0}% ${battery_bar 2,64 BAT0}
 
-        --- ${if_existing /proc/net/route wlp3s0}${color}|up: ${color D7D3C5}
-        --- #${if_up wlp3s0}${color}|up: ${color D7D3C5}
-        --- #${color D7D3C5}${totalup wlp3s0}
-        --- ${color D7D3C5}${upspeed wlp3s0}/s
-        --- ${color}|down: ${color D7D3C5}
-        --- #${color D7D3C5}${totaldown wlp3s0}
-        --- ${color D7D3C5}${downspeed wlp3s0}/s
-        --- ${color}${upspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090} ${color}${downspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090}${endif}
-        --- ${if_existing /proc/net/route eth0}${color}|up: ${color D7D3C5}
-        --- #${if_up eth0}${color}|up: ${color D7D3C5}
-        --- #${color D7D3C5}${totalup eth0}
-        --- ${color D7D3C5}${upspeed eth0}/s
-        --- ${color}|down: ${color D7D3C5}
-        --- #${color D7D3C5}${totaldown eth0}
-        --- ${color D7D3C5}${downspeed eth0}/s
-        --- ${color}${upspeedgraph eth0 13,36 AEA08E 9F907D}${color 909090} ${color}${downspeedgraph eth0 13,36 AEA08E 9F907D}${color 909090}${endif}
-
-        --- ${color D7D3C5}${diskio_read}/s
-        --- ${color D7D3C5}${diskio_write}/s
+        memrow:add(netwidget)
+        --- ${color}${upspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090} ${color}${downspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090}
+        memrow:add(diowidget)
         --- ${color}${diskiograph_read 13,36 AEA08E 9F907D}${color 909090} ${color}${diskiograph_write 13,36 AEA08E 9F907D}${color 909090}
+
+
+        -- Takes an (optional) argument which, if true, includes remote file systems, only local file systems are included by default
+        -- Returns a table with string keys, using mount points as a base: {/ size_mb}, {/ size_gb}, {/ used_mb}, {/ used_gb}, {/ used_p}, {/ avail_mb}, {/ avail_gb}, {/ avail_p}, {/home size_mb} etc.
+
+--        fstext = wibox.widget.textbox()
+--        vicious.register(fswidet, vicious.widgets.fs, '/ : <span color="'
+--                .. "#FF5656" .. '">${/ size_gb}/s</span> sda r: <span color="'
+--                .. "#88A175" .. '">${/ size_}/ avail_gb</span>', 3)
+
+        fsbarwidget = wibox.widget.progressbar()
+
+
+        fsbar = wibox.widget {
+            max_value     = 100,
+            color = '#D7D3C5',
+            background_color = '#D7D7C5',
+            opacity = 1,
+            widget        = wibox.widget.progressbar,
+        }
+        vicious.register(fsbar, vicious.widgets.fs, '${/ used_p}', 3)
+
+        fswidget = wibox.widget.textbox()
+        vicious.register(fswidget, vicious.widgets.fs, '/ : <span color="'
+                .. "#FF5656" .. '">${/ size_gb}GB</span>/ <span color="'
+                .. "#88A175" .. '">${/ avail_gb}GB</span> ${/ used_p}', 3)
+
+        fswidget2 = wibox.widget.textbox()
+        vicious.register(fswidget2, vicious.widgets.fs, '/tmp : <span color="'
+                .. "#FF5656" .. '">${/tmp size_gb}GB</span> / <span color="'
+                .. "#88A175" .. '">${/tmp avail_gb}GB</span>', 3)
+
+        memrow:add(fswidget)
+        memrow:add(fsbar)
+        memrow:add(fswidget2)
 
         --- ${color}|Root:${color D7D3C5}
         --- ${fs_free /}
@@ -457,26 +499,31 @@ function widget.new(args)
         --- ${fs_free /tmp}
         --- ${fs_bar 2,64 /tmp}
         --- #${color D7D3C5}${hddtemp}
+        --        memrow:add(ttt)
 
+        columns = wibox.layout.flex.horizontal()
+
+--    columns:add(ttt)
+--        columns:add(datewidget)
         --- columns:add(fsicon)
-        columns:add(diowidget)
+--        columns:add(diowidget)
         --- columns:add(separator)
         --- columns:add(neticon)
-        columns:add(netwidget)
+--        columns:add(netwidget)
         --- columns:add(netupicon)
         --- columns:add(separator)
         --- columns:add(cpuicon)
-        columns:add(cpuwidget)
+--        columns:add(cpuwidget)
         --- columns:add(separator)
         --- columns:add(memicon)
         columns:add(memrow)
         --- columns:add(separator)
         --- columns:add(baticon)
-        columns:add(batwidget)
-        --- columns:add(separator)
-        --- columns:add(dateicon)
-        columns:add(datewidget)
-        --- columns:add(separator)
+--        columns:add(batwidget)
+--        columns:add(dateicon)
+
+
+--        columns:add(rows)
         table.insert(pages, columns)
 
         local mywibox = wibox({
