@@ -8,7 +8,8 @@ theme.confdir       = awful.util.getdir("config")
 
 theme.font          = "WenQuanYi Micro Hei 9"
 
-theme.bg_normal     = "#222222"
+theme.bg_normal     = "#222222aa"
+--theme.bg_normal     = "#ff00ffaa"
 theme.bg_focus      = "#535d6c"
 theme.bg_urgent     = "#ff0000"
 theme.bg_minimize   = "#444444"
@@ -33,6 +34,8 @@ theme.border_marked = "#91231c"
 -- Example:
 --theme.taglist_bg_focus = "#ff0000"
 
+-- theme.tasklist_bg = "#ff00ff"
+
 -- Display the taglist squares
 theme.taglist_squares_sel   = theme.confdir .. "/default/taglist/squarefz.png"
 theme.taglist_squares_unsel = theme.confdir .. "/default/taglist/squareza.png"
@@ -44,8 +47,8 @@ theme.tasklist_floating_icon = theme.confdir .. "/default/icons/sun.png"
 -- menu_[border_color|border_width]
 --theme.menu_submenu_icon = theme.confdir .. "/default/submenu.png"
 theme.menu_submenu_icon = theme.confdir .. "/default/icons/sun.png"
-theme.menu_height = "15"
-theme.menu_width  = "100"
+theme.menu_height = "24"
+theme.menu_width  = "180"
 
 -- You can add as many variables as
 -- you wish and access them by using
@@ -88,7 +91,8 @@ theme.titlebar_maximized_button_focus_active  = theme.confdir .. "/default/title
 -- theme.wallpaper = "/home/Misaka-Mikoto-desktopsky-90999.jpg"
 -- theme.wallpaper = "/home/lizf/Downloads/rect5399.png"
 -- theme.wallpaper = "/home/lizf/Pictures/Bing/RainierMilkyWay_ZH-CN9404321904_1920x1080.jpg"
-theme.wallpaper = "/home/lizf/.cache/himawaripy/latest.png"
+-- theme.wallpaper = "/home/lizf/.cache/himawaripy/latest.png"
+theme.wallpaper = "/home/lizf/Pictures/login-background-1920.0DqnS.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh      = theme.confdir .. "/default/layouts/fairh.png"

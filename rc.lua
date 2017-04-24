@@ -9,10 +9,12 @@ awful.layout = require("awful.layout")
 beautiful = require("beautiful")
 wibox = require("wibox")
 -- menubar = require("menubar")
+local hotkeys_popup = require("awful.hotkeys_popup").widget
+local conky_popup = require("conky_popup").widget
 -- Notification library
 -- require("naughty")
 
-
+app_folders = { "/usr/share/applications/", "~/.local/share/applications/" }
 
 -- require("conf_var")
 terminal = "sakura"
@@ -390,22 +392,27 @@ root.buttons(awful.util.table.join(
 local scratch = require("scratch")
 
 globalkeys = awful.util.table.join(
+    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help, {description="show help", group="awesome"}),
+    awful.key({ modkey,           }, "d",      conky_popup.show_help, {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "e", function () awful.util.spawn("pcmanfm") end),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
 
-    awful.key({ modkey,           }, "j",
+        awful.key({ modkey,           }, "j",
         function ()
             awful.client.focus.byidx( 1)
-            if client.focus then client.focus:raise() end
-        end),
+        end,
+        {description = "focus next by index", group = "client"}
+    ),
     awful.key({ modkey,           }, "k",
         function ()
             awful.client.focus.byidx(-1)
-            if client.focus then client.focus:raise() end
-        end),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show(true)        end),
+        end,
+        {description = "focus previous by index", group = "client"}
+    ),
+    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+              {description = "show main menu", group = "awesome"}),
 
     -- Screen manipulation
     awful.key({ modkey, "Control" }, "Left", function () awful.screen.focus_relative(-1) end),
@@ -433,10 +440,10 @@ globalkeys = awful.util.table.join(
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
-    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)      end),
-    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
-    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
-    awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
+    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true)      end),
+    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true)      end),
+    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1, nil, true)         end),
+    awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)         end),
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
@@ -550,11 +557,17 @@ for i = 1, keynumber do
     globalkeys = awful.util.table.join(globalkeys,
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
-                        local screen = mouse.screen
-                        if tags[screen][i] then
-                            awful.tag.viewonly(tags[screen][i])
+                        -- local screen = mouse.screen
+                        -- if tags[screen][i] then
+                        --     awful.tag.viewonly(tags[screen][i])
+                        -- end
+                        local screen = awful.screen.focused()
+                        local tag = screen.tags[i]
+                        if tag then
+                           tag:view_only()
                         end
-                  end),
+                  end,
+                  {description = "切换到标签 #"..i, group = "tag"}),
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
                       local screen = mouse.screen
@@ -565,12 +578,19 @@ for i = 1, keynumber do
                   end),
         awful.key({ modkey, "Shift" }, "#" .. i + 9,
                   function ()
-                      if client.focus and tags[client.focus.screen][i] then
-                          awful.client.movetotag(tags[client.focus.screen][i])
-			  client.focus:move_to_tag(client.focus.screen.tags[i])
-                          -- awful.client.movetoscreen()
-                      end
-                  end),
+                      -- if client.focus and tags[client.focus.screen][i] then
+                      --    awful.client.movetotag(tags[client.focus.screen][i])
+                      --    client.focus:move_to_tag(client.focus.screen.tags[i])
+                      --    -- awful.client.movetoscreen()
+                      --end
+                      if client.focus then
+                          local tag = client.focus.screen.tags[i]
+                          if tag then
+                              client.focus:move_to_tag(tag)
+                          end
+                     end
+                  end,
+                  {description = "move focused client to tag #"..i, group = "tag"}),
         awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
                   function ()
                       if client.focus and tags[client.focus.screen][i] then
@@ -693,6 +713,8 @@ client.connect_signal("unfocus", function(c)
 -- {{{ Autorun
 autorun = true 
 autorunApps = {
+    "cmst",
+    "ss-qt5",
 --  "skype",
 --  "feh --bg-scale /home/xifs/Pictures/bamboo2.jpg",
 --  "feh --bg-scale /home/xifs/00qbg.png",
@@ -706,7 +728,33 @@ end
 mywibox[main_screen].visible = false
 
 
+-- battery warning
+local function trim(s)
+  return s:find'^%s*$' and '' or s:match'^%s*(.*%S)'
+end
 
+local function bat_notification()
+  local f_capacity = assert(io.open("/sys/class/power_supply/BAT0/capacity", "r"))
+  local f_status = assert(io.open("/sys/class/power_supply/BAT0/status", "r"))
+  local bat_capacity = tonumber(f_capacity:read("*all"))
+  local bat_status = trim(f_status:read("*all"))
+
+  if (bat_capacity <= 100 and bat_status == "Discharging") then
+    theme.border_normal = "#ff0000"
+    theme.border_focus  = "#ff0000"
+    theme.border_marked = "#ff0000"
+  else
+    theme.border_normal = "#000000"
+    theme.border_focus  = "#535d6c"
+    theme.border_marked = "#91231c"
+  end
+end
+
+battimer = gears.timer({timeout = 60})
+battimer:connect_signal("timeout", bat_notification)
+battimer:start()
+
+-- end here for battery warning
 
 --require("revelation")
 print("Modules loaded: " .. os.time())
