@@ -391,22 +391,10 @@ function widget.new(args)
         batwidget = wibox.widget.textbox()
         vicious.register(batwidget, vicious.widgets.bat, "bat: $1 $2%", 61, "BAT0")
 
-        --- 1st value as usage of all CPUs/cores
-        --- 2nd as usage of first CPU/core
-        --- 3rd as usage of second CPU/core etc.
-        --- cpuwidget = wibox.widget.textbox()
-        --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
-        cpuwidget = wibox.widget {
-            max_value = 100,
-            step_width = 3,
-            step_spacing = 1,
-            step_shape = function(cr, width, height)
-                gears.shape.rounded_rect(cr, width, height, 2)
-            end,
-            direction     = 'east',
-            widget = wibox.widget.graph
+        cputext = wibox.widget {
+            widget = wibox.widget.textbox
         }
-        vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
+        vicious.register(cputext, vicious.widgets.cpu, "$2% $3% $4% $5%", 3)
 
         memwidget = wibox.widget.textbox()
         vicious.cache(vicious.widgets.mem)
@@ -429,19 +417,37 @@ function widget.new(args)
         datewidget = wibox.widget.textbox()
         vicious.register(datewidget, vicious.widgets.date, '<span color="#D7D3C5"> %a  %Y-%m-%d %H:%M </span>', 5)
 
-        memrow = wibox.layout.flex.vertical()
+
+        --- 1st value as usage of all CPUs/cores
+        --- 2nd as usage of first CPU/core
+        --- 3rd as usage of second CPU/core etc.
+        --- cpuwidget = wibox.widget.textbox()
+        --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
+        cpuwidget = wibox.widget {
+            background_color = "#ff000033",
+            max_value = 100,
+            width = 100,
+            height = 24,
+            step_width = 3,
+            step_spacing = 1,
+            step_shape = function(cr, width, height)
+                gears.shape.rounded_rect(cr, width, height, 2)
+            end,
+            direction     = 'east',
+            widget = wibox.widget.graph
+        }
+        vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
+
+        memrow = wibox.layout.fixed.vertical()
         memrow:add(datewidget)
-        --- ${color}|Up:${color D7D3C5}  ${uptime_short}
-        --- ${color}|Kernel:  ${color D7D3C5}$kernel
         --- ${color D7D3C5}$acpitemp 'C
-        --- ${color}|Load: ${color D7D3C5}   $loadavg
         --- ${color}|Processes:${color D7D3C5}  $running_processes|$processes
+        memrow:add(cputext)
         memrow:add(cpuwidget)
-        --- ${cpu cpu0}%   ${cpu cpu1}%  ${cpu cpu2}%   ${cpu cpu3}%
         --- ${color}${cpugraph cpu0 13,36 AEA08E 9F907D} ${color}${cpugraph cpu2 13,36 AEA08E 9F907D}
         --- ${color}${cpugraph cpu1 13,36 AEA08E 9F907D} ${color}${cpugraph cpu3 13,36 AEA08E 9F907D}
         memrow:add(memwidget)
-        --- ${color}|Mem: ${color D7D3C5} $mem $memperc% ${color}${membar 2,64}${color D7D3C5}
+        --- ${color}|Mem: ${color D7D3C5} ${color}${membar 2,64}${color D7D3C5}
 
         memrow:add(batwidget)
         --- ${battery_percent BAT0}% ${battery_bar 2,64 BAT0}
@@ -470,40 +476,79 @@ function widget.new(args)
             opacity = 1,
             widget        = wibox.widget.progressbar,
         }
-        vicious.register(fsbar, vicious.widgets.fs, '${/ used_p}', 3)
+--        vicious.register(fsbar, vicious.widgets.fs, '${/ used_p}', 3)
 
         fswidget = wibox.widget.textbox()
-        vicious.register(fswidget, vicious.widgets.fs, '/ : <span color="'
+        vicious.register(fswidget, vicious.widgets.fs, 'sda : <span color="'
                 .. "#FF5656" .. '">${/ size_gb}GB</span>/ <span color="'
-                .. "#88A175" .. '">${/ avail_gb}GB</span> ${/ used_p}', 3)
+                .. "#88A175" .. '">${/ avail_mb}MB</span>', 3)
 
         fswidget2 = wibox.widget.textbox()
-        vicious.register(fswidget2, vicious.widgets.fs, '/tmp : <span color="'
+        vicious.register(fswidget2, vicious.widgets.fs, 'sdb : <span color="'
                 .. "#FF5656" .. '">${/tmp size_gb}GB</span> / <span color="'
-                .. "#88A175" .. '">${/tmp avail_gb}GB</span>', 3)
+                .. "#88A175" .. '">${/tmp avail_mb}MB</span>', 3)
+
+        fswidget3 = wibox.widget.textbox()
+        vicious.register(fswidget3, vicious.widgets.fs, 'tmp : <span color="'
+                .. "#FF5656" .. '">${/media/sdb1 size_gb}GB</span> / <span color="'
+                .. "#88A175" .. '">${/media/sdb1 avail_mb}MB</span>', 3)
+
+        ostext = wibox.widget.textbox()
+        vicious.register(ostext, vicious.widgets.os, '$1 $2 $3 $4 $5 $6%', 3)
+        memrow:add(ostext)
+
+        thermaltext = wibox.widget.textbox()
+        vicious.register(thermaltext, vicious.widgets.thermal, '$1 $2 $3 $4', 3)
+        memrow:add(thermaltext)
+
+        uptimetext = wibox.widget.textbox()
+        vicious.register(uptimetext, vicious.widgets.uptime, 'Uptime: $1d $2h $3m Load: $4 $5 $6', 3)
+        memrow:add(uptimetext)
+
+        wifitext = wibox.widget.textbox()
+        vicious.register(wifitext, vicious.widgets.wifi("wlan0"), 'Wifi: ${ssid}, ${mode}, ${chan}, ${rate}, ${link}, ${linp}% ${sign}', 3)
+        memrow:add(wifitext)
 
         memrow:add(fswidget)
-        memrow:add(fsbar)
+        memrow:add(fswidget3)
+--        memrow:add(fsbar)
         memrow:add(fswidget2)
-
-        --- ${color}|Root:${color D7D3C5}
-        --- ${fs_free /}
-        --- ${fs_bar 2,64 /}
-        --- ${color}|Home:${color D7D3C5}
-        --- ${fs_free /home/lizf}
-        --- ${fs_bar 2,64 /home/lizf}
-        --- ${color}|Data:${color D7D3C5}
-        --- ${fs_free /home}
-        --- ${fs_bar 2,64 /home}
-        --- ${color}|Temp:${color D7D3C5}
-        --- ${fs_free /tmp}
-        --- ${fs_bar 2,64 /tmp}
-        --- #${color D7D3C5}${hddtemp}
-        --        memrow:add(ttt)
+--        memrow:add(wibox.widget {
+--                value              = 0.5,
+--                max_value          = 1,
+--                min_value          = 0,
+--                widget             = wibox.container.radialprogressbar
+--            })
+        cpuarc = wibox.widget {
+            {
+                text   = math.pi/2,
+                align  = "center",
+                valign = "center",
+                widget = wibox.widget.textbox,
+            },
+            colors = {
+                beautiful.bg_normal,
+                beautiful.bg_highlight,
+                beautiful.border_color,
+            },
+            value = 30,
+            max_value    = 100,
+            min_value    = 0,
+            rounded_edge = false,
+            bg           = "#ff000033",
+            start_angle  = math.pi/2,
+            border_width = 2,
+            forced_width = 100,
+            forced_height = 100,
+--            opacity
+--            thickness = 10,
+            border_color = "#000000",
+            widget       = wibox.container.arcchart
+        }
+        memrow:add(cpuarc)
+        vicious.register(cpuarc, vicious.widgets.cpu, "$1", 3)
 
         columns = wibox.layout.flex.horizontal()
-
---    columns:add(ttt)
 --        columns:add(datewidget)
         --- columns:add(fsicon)
 --        columns:add(diowidget)
