@@ -31,13 +31,14 @@ beautiful.init(confdir .. "/default/theme.lua")
 -- beautiful.init(confdir .. "/holo/theme.lua")
 
 -- {{{ Wallpaper
-if beautiful.wallpaper then
-    for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
-    end
-end
+--if beautiful.wallpaper then
+--    for s = 1, screen.count() do
+--        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+--    end
+--end
 -- }}}
 
+gears.wallpaper.maximized(beautiful.wallpaper)
 
 
 --require("conf_layout")
@@ -389,7 +390,7 @@ root.buttons(awful.util.table.join(
 -- awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'") end),
 -- awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
 -- awful.key({ "Control"          }, "twosuperior", function () teardrop.toggle(terminal .. " -name dropdown","bottom","center",0.80,0.25,true) end)
-local scratch = require("scratch")
+-- local scratch = require("scratch")
 
 globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help, {description="show help", group="awesome"}),
