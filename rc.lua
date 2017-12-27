@@ -740,10 +740,20 @@ local function bat_notification()
   local bat_capacity = tonumber(f_capacity:read("*all"))
   local bat_status = trim(f_status:read("*all"))
 
-  if (bat_capacity <= 100 and bat_status == "Discharging") then
-    theme.border_normal = "#ff0000"
-    theme.border_focus  = "#ff0000"
-    theme.border_marked = "#ff0000"
+  if (bat_status == "Discharging") then
+    if (bat_capacity <= 60) then
+      conky_popup:set_bg("#ff0000")
+    elseif (bat_capacity <= 80) then
+      myteststatusbar2:set_bg("#ff0000")
+    elseif (bat_capacity <= 100) then
+      theme.border_normal = "#ff0000"
+      theme.border_focus  = "#ff0000"
+      theme.border_marked = "#ff0000"
+    else
+      theme.border_normal = "#ff0000"
+      theme.border_focus  = "#ff0000"
+      theme.border_marked = "#ff0000"
+    end
   else
     theme.border_normal = "#000000"
     theme.border_focus  = "#535d6c"
@@ -751,6 +761,7 @@ local function bat_notification()
   end
 end
 
+bat_notification()
 battimer = gears.timer({timeout = 60})
 battimer:connect_signal("timeout", bat_notification)
 battimer:start()
