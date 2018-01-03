@@ -429,23 +429,20 @@ function widget.new(args)
         }
         -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
 
-        memrow = wibox.layout.fixed.vertical()
-        memrow:add(datewidget)
+        
         --- ${color D7D3C5}$acpitemp 'C
         --- ${color}|Processes:${color D7D3C5}  $running_processes|$processes
-        memrow:add(cputext)
+
         -- memrow:add(cpuwidget)
         --- ${color}${cpugraph cpu0 13,36 AEA08E 9F907D} ${color}${cpugraph cpu2 13,36 AEA08E 9F907D}
         --- ${color}${cpugraph cpu1 13,36 AEA08E 9F907D} ${color}${cpugraph cpu3 13,36 AEA08E 9F907D}
-        memrow:add(memwidget)
-        --- ${color}|Mem: ${color D7D3C5} ${color}${membar 2,64}${color D7D3C5}
 
-        memrow:add(batwidget)
+        --- ${color}|Mem: ${color D7D3C5} ${color}${membar 2,64}${color D7D3C5}
+        
         --- ${battery_percent BAT0}% ${battery_bar 2,64 BAT0}
 
-        memrow:add(netwidget)
         --- ${color}${upspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090} ${color}${downspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090}
-        memrow:add(diowidget)
+        
         --- ${color}${diskiograph_read 13,36 AEA08E 9F907D}${color 909090} ${color}${diskiograph_write 13,36 AEA08E 9F907D}${color 909090}
 
 
@@ -488,24 +485,21 @@ function widget.new(args)
         ostext = wibox.widget.textbox()
         -- vicious.register(ostext, vicious.widgets.os, '$1 $2 $3 $4 $5 $6%', 3)
         vicious.register(ostext, vicious.widgets.os, '<span font="Monospace Bold 12">$1 $2 $3 $4 $5 $6%</span>', 3)
-        memrow:add(ostext)
+
 
         thermaltext = wibox.widget.textbox()
         vicious.register(thermaltext, vicious.widgets.thermal, '$1 $2 $3 $4', 3)
-        memrow:add(thermaltext)
+        
 
         uptimetext = wibox.widget.textbox()
         vicious.register(uptimetext, vicious.widgets.uptime, 'Uptime: $1d $2h $3m Load: $4 $5 $6', 3)
-        memrow:add(uptimetext)
+        
 
         wifitext = wibox.widget.textbox()
-        vicious.register(wifitext, vicious.widgets.wifi("wlan0"), 'Wifi: ${ssid}, ${mode}, ${chan}, ${rate}, ${link}, ${linp}% ${sign}', 3)
-        memrow:add(wifitext)
+        vicious.register(wifitext, vicious.widgets.wifi("wlp3s0"), 'Wifi: ${ssid}, ${mode}, ${chan}, ${rate}, ${link}, ${linp}% ${sign}', 3)
 
-        memrow:add(fswidget)
-        memrow:add(fswidget3)
        -- memrow:add(fsbar)
-        memrow:add(fswidget2)
+        
 --        memrow:add(wibox.widget {
 --                value              = 0.5,
 --                max_value          = 1,
@@ -542,7 +536,6 @@ function widget.new(args)
                 self.value = tonumber(value)
             end,
         }
-        memrow:add(cpuarc)
 
         batarctext = wibox.widget {
             align  = "center",
@@ -573,12 +566,13 @@ function widget.new(args)
                 self.value = tonumber(value)
             end,
         }
-        memrow:add(batarc)
+
+
         -- vicious.register(batwidget, vicious.widgets.bat, "bat: $1 $2%", 61, "BAT0")
         vicious.register(batwidget, vicious.widgets.bat,
         function (widget, args)
             batarc:set_value(args[2])
-            batarctext:set_text(args[2])
+            batarctext:set_text(string.format("Bat: %02d%%", args[2]))
             return string.format("Battery: %s %02d%%", args[1], args[2])
         end, 31, "BAT0")
 
@@ -600,7 +594,7 @@ function widget.new(args)
             rounded_edge = false,
             bg           = "#ff000033",
             start_angle  = math.pi/2,
-            border_width = 2,
+            border_width = 3,
             forced_width = 200,
             forced_height = 200,
 --            opacity
@@ -611,14 +605,14 @@ function widget.new(args)
                 self.value = tonumber(value)
             end,
         }
-        memrow:add(memarc)
+
         -- vicious.register(memarc, vicious.widgets.mem, "$1", 3)
         -- vicious.register(memarctext, vicious.widgets.mem, "$1", 3)
         -- vicious.register(memwidget, vicious.widgets.mem, "mem:$1% used:$2MB swp:$5% used:$6MB", 13)
         vicious.register(memwidget, vicious.widgets.mem,
         function (widget, args)
             memarc:set_value(args[1])
-            memarctext:set_text(args[1])
+            memarctext:set_text(string.format("Mem: %02d%%", args[1]))
             return string.format("Mem: %02d%% %dMB Swap: %02d%% %dMB", args[1], args[2], args[5], args[6])
             -- memwidget:set_text("Mem:$1% used:$2MB Swap:$5% used:$6MB")
         end, 3)
@@ -626,15 +620,13 @@ function widget.new(args)
 
     local cal = wibox.widget {
         date         = os.date('*t'),
-        font         = 'Monospace 8',
+        font         = 'Monospace 12',
         spacing      = 2,
         week_numbers = true,
         start_sunday = false,
         long_weekdays = true,
         widget       = wibox.widget.calendar.month
     }
-    memrow:add(cal)
-
 
     ctext = wibox.widget.textbox()
     cgraph = wibox.widget {
@@ -654,7 +646,7 @@ function widget.new(args)
     vicious.register(cputext, vicious.widgets.cpu,
       function (widget, args)
         cpuarc:set_value(args[1])
-        cpuarctext:set_text(args[1])
+        cpuarctext:set_text(string.format("CPU: %02d%%", args[1]))
         cpuwidget:add_value(args[1])
         ctext:set_text(args[1])
         cgraph:add_value(args[2], 1) -- Core 1, color 1
@@ -662,7 +654,7 @@ function widget.new(args)
         cgraph:add_value(args[4], 3) -- Core 3, color 3
         return string.format("%02d%% %02d%% %02d%% %02d%%", args[2], args[3], args[4], args[5])
       end, 3)
-    memrow:add(cgraph)
+    
 
     mtext = wibox.widget.textbox()
     mgraph = wibox.widget {
@@ -683,9 +675,38 @@ function widget.new(args)
     --     mgraph:add_value(args[5], 2)
     --     return args[1]
     --   end, 3)
-    memrow:add(mgraph)
+    memrow = wibox.widget {
+        ostext,
+        datewidget,
+        cputext,
+        memwidget,
+        batwidget,
+        netwidget,
+        diowidget,
+        thermaltext,
+        uptimetext,
+        wifitext,
+        fswidget,
+        fswidget3,
+        fswidget2,
+        -- layout = wibox.layout.flex.vertical
+        layout = wibox.layout.fixed.vertical
+    }
 
-cpugraph0 = wibox.layout.fixed.vertical()
+cpugraph0 = wibox.widget {
+    wibox.widget {
+        cpuarc,
+        batarc,
+        memarc,
+        layout = wibox.layout.flex.horizontal
+    },
+    -- cgraph,
+    -- mgraph,
+    wibox.widget {
+        layout = wibox.layout.flex.vertical
+    },
+    layout = wibox.layout.flex.vertical
+}
 -- cpugraph0:set_width(120):set_height(20)
 -- -- cpugraph0:set_border_color(nil)
 -- -- cpugraph0:set_border_color(beautiful.bg_widget)
@@ -702,7 +723,13 @@ cpugraph0 = wibox.layout.fixed.vertical()
 -- })
 -- vicious.register(cpugraph0, vicious.widgets.cpu, "$2", 3)
 
-membar = wibox.layout.fixed.vertical()
+membar = wibox.widget {
+    cal,
+    wibox.widget {
+        layout = wibox.layout.flex.vertical
+    },
+    layout = wibox.layout.flex.vertical
+}
 -- membar:set_vertical(false)
 -- membar:set_width(120)
 -- membar:set_height(120)
@@ -721,7 +748,13 @@ membar = wibox.layout.fixed.vertical()
 -- })
 -- vicious.register(membar, vicious.widgets.mem, "$1", 3)
 
-        columns = wibox.layout.flex.horizontal()
+        columns = wibox.widget {
+            memrow,
+            cpugraph0,
+            membar,
+            layout = wibox.layout.flex.horizontal
+        }
+
 --        columns:add(datewidget)
         --- columns:add(fsicon)
 --        columns:add(diowidget)
@@ -734,9 +767,9 @@ membar = wibox.layout.fixed.vertical()
 --        columns:add(cpuwidget)
         --- columns:add(separator)
         -- columns:add(memicon)
-        columns:add(memrow)
-        columns:add(cpugraph0)
-        columns:add(membar)
+        -- columns:add(memrow)
+        -- columns:add(cpugraph0)
+        -- columns:add(membar)
         --- columns:add(separator)
         --- columns:add(baticon)
 --        columns:add(batwidget)
