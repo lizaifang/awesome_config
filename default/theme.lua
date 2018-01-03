@@ -37,6 +37,13 @@ theme.border_marked = "#91231c"
 -- theme.tasklist_bg = "#ff00ff"
 
 -- Display the taglist squares
+-- theme.taglist_fg_focus    = "#3992af"
+-- theme.taglist_fg_occupied = "#164b5d"
+-- theme.taglist_fg_urgent   = "#ED7572"
+-- theme.taglist_fg_empty    = "#828282"
+-- theme.taglist_spacing     = 2
+-- theme.taglist_font = "awesomewm-font 13"
+
 theme.taglist_squares_sel   = theme.confdir .. "/default/taglist/squarefz.png"
 theme.taglist_squares_unsel = theme.confdir .. "/default/taglist/squareza.png"
 theme.tasklist_floating_icon = theme.confdir .. "/default/icons/sun.png"

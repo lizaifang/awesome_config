@@ -722,7 +722,8 @@ autorunApps = {
 }
 if autorun then
     for app = 1, #autorunApps do
-        awful.util.spawn(autorunApps[app])
+        -- awful.util.spawn(autorunApps[app])
+        awful.spawn(autorunApps[app])
     end
 end
 -- }}}
@@ -755,6 +756,7 @@ local function bat_notification()
       theme.border_marked = "#ff0000"
     end
   else
+    myteststatusbar2:set_bg("#000000")
     theme.border_normal = "#000000"
     theme.border_focus  = "#535d6c"
     theme.border_marked = "#91231c"
