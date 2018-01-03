@@ -389,16 +389,6 @@ function widget.new(args)
 
         memwidget = wibox.widget.textbox()
         vicious.cache(vicious.widgets.mem)
-        --- 1st value as memory usage in percent
-        --- 2nd as memory usage
-        --- 3rd as total system memory
-        --- 4th as free memory
-        --- 5th as swap usage in percent
-        --- 6th as swap usage
-        --- 7th as total system swap
-        --- 8th as free swap and 9th as memory usage with buffers and cache
-        -- vicious.register(memwidget, vicious.widgets.mem, "mem:$1% used:$2MB swp:$5% used:$6MB", 13)
-
 
         diowidget = wibox.widget.textbox()
         vicious.register(diowidget, vicious.widgets.dio, 'sda w: <span color="'
@@ -408,12 +398,6 @@ function widget.new(args)
         datewidget = wibox.widget.textbox()
         vicious.register(datewidget, vicious.widgets.date, '<span color="#D7D3C5"> %a  %Y-%m-%d %H:%M </span>', 5)
 
-
-        --- 1st value as usage of all CPUs/cores
-        --- 2nd as usage of first CPU/core
-        --- 3rd as usage of second CPU/core etc.
-        --- cpuwidget = wibox.widget.textbox()
-        --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
         cpuwidget = wibox.widget {
             background_color = "#ff000033",
             max_value = 100,
@@ -606,9 +590,14 @@ function widget.new(args)
             end,
         }
 
-        -- vicious.register(memarc, vicious.widgets.mem, "$1", 3)
-        -- vicious.register(memarctext, vicious.widgets.mem, "$1", 3)
-        -- vicious.register(memwidget, vicious.widgets.mem, "mem:$1% used:$2MB swp:$5% used:$6MB", 13)
+        --- 1st value as memory usage in percent
+        --- 2nd as memory usage
+        --- 3rd as total system memory
+        --- 4th as free memory
+        --- 5th as swap usage in percent
+        --- 6th as swap usage
+        --- 7th as total system swap
+        --- 8th as free swap and 9th as memory usage with buffers and cache
         vicious.register(memwidget, vicious.widgets.mem,
         function (widget, args)
             memarc:set_value(args[1])
@@ -639,6 +628,12 @@ function widget.new(args)
         stack_colors = { "#FF5656", "#88A175", "#AECF96" },
         widget = wibox.widget.graph
     }
+
+    --- 1st value as usage of all CPUs/cores
+    --- 2nd as usage of first CPU/core
+    --- 3rd as usage of second CPU/core etc.
+    --- cpuwidget = wibox.widget.textbox()
+    --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
     -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
     -- vicious.register(cpuarc, vicious.widgets.cpu, "$2", 3)
     -- vicious.register(cpuarctext, vicious.widgets.cpu, "$2", 3)
@@ -647,11 +642,11 @@ function widget.new(args)
       function (widget, args)
         cpuarc:set_value(args[1])
         cpuarctext:set_text(string.format("CPU: %02d%%", args[1]))
-        cpuwidget:add_value(args[1])
+        -- cpuwidget:add_value(args[1])
         ctext:set_text(args[1])
-        cgraph:add_value(args[2], 1) -- Core 1, color 1
-        cgraph:add_value(args[3], 2) -- Core 2, color 2
-        cgraph:add_value(args[4], 3) -- Core 3, color 3
+        -- cgraph:add_value(args[2], 1) -- Core 1, color 1
+        -- cgraph:add_value(args[3], 2) -- Core 2, color 2
+        -- cgraph:add_value(args[4], 3) -- Core 3, color 3
         return string.format("%02d%% %02d%% %02d%% %02d%%", args[2], args[3], args[4], args[5])
       end, 3)
     
