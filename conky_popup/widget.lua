@@ -647,7 +647,7 @@ function widget.new(args)
         -- cgraph:add_value(args[2], 1) -- Core 1, color 1
         -- cgraph:add_value(args[3], 2) -- Core 2, color 2
         -- cgraph:add_value(args[4], 3) -- Core 3, color 3
-        return string.format("%02d%% %02d%% %02d%% %02d%%", args[2], args[3], args[4], args[5])
+        return string.format("CPU: %02d%% %02d%% %02d%% %02d%%", args[2], args[3], args[4], args[5])
       end, 3)
     
 
