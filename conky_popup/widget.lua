@@ -384,11 +384,10 @@ function widget.new(args)
         cputext = wibox.widget {
             widget = wibox.widget.textbox
         }
-        vicious.cache(vicious.widgets.cpu)
+        
         -- vicious.register(cputext, vicious.widgets.cpu, "$2% $3% $4% $5%", 3)
 
         memwidget = wibox.widget.textbox()
-        vicious.cache(vicious.widgets.mem)
 
         diowidget = wibox.widget.textbox()
         vicious.register(diowidget, vicious.widgets.dio, 'sda w: <span color="'
@@ -530,14 +529,15 @@ function widget.new(args)
             batarctext,
             colors = {
                 beautiful.bg_normal,
-                beautiful.bg_highlight,
-                beautiful.border_color,
+                "#00FF5656",
+                "#0088A175",
             },
             -- value = 30,
             max_value    = 100,
             min_value    = 0,
             rounded_edge = false,
-            bg           = "#ff000033",
+            -- bg           = "#ff000033",
+            bg           = "#0088A175",
             start_angle  = math.pi/2,
             border_width = 2,
             forced_width = 100,
@@ -576,7 +576,7 @@ function widget.new(args)
             max_value    = 100,
             min_value    = 0,
             rounded_edge = false,
-            bg           = "#ff000033",
+            bg           = "#00ff5656",
             start_angle  = math.pi/2,
             border_width = 3,
             forced_width = 200,
@@ -598,11 +598,12 @@ function widget.new(args)
         --- 6th as swap usage
         --- 7th as total system swap
         --- 8th as free swap and 9th as memory usage with buffers and cache
+        vicious.cache(vicious.widgets.mem)
         vicious.register(memwidget, vicious.widgets.mem,
         function (widget, args)
             memarc:set_value(args[1])
             memarctext:set_text(string.format("Mem: %02d%%", args[1]))
-            return string.format("Mem: %02d%% %dMB Swap: %02d%% %dMB", args[1], args[2], args[5], args[6])
+            return string.format("Mem: %02d%% %2dMB Swap: %02d%% %2dMB", args[1], args[2], args[5], args[6])
             -- memwidget:set_text("Mem:$1% used:$2MB Swap:$5% used:$6MB")
         end, 3)
 
@@ -638,6 +639,7 @@ function widget.new(args)
     -- vicious.register(cpuarc, vicious.widgets.cpu, "$2", 3)
     -- vicious.register(cpuarctext, vicious.widgets.cpu, "$2", 3)
     -- vicious.register(cputext, vicious.widgets.cpu, "$2% $3% $4% $5%", 3)
+    vicious.cache(vicious.widgets.cpu)
     vicious.register(cputext, vicious.widgets.cpu,
       function (widget, args)
         cpuarc:set_value(args[1])
@@ -685,7 +687,7 @@ function widget.new(args)
         fswidget3,
         fswidget2,
         -- layout = wibox.layout.flex.vertical
-        layout = wibox.layout.fixed.vertical
+        layout = wibox.layout.flex.vertical
     }
 
 cpugraph0 = wibox.widget {
@@ -744,7 +746,13 @@ membar = wibox.widget {
 -- vicious.register(membar, vicious.widgets.mem, "$1", 3)
 
         columns = wibox.widget {
-            memrow,
+            wibox.widget {
+                memrow,
+                wibox.widget {
+                    layout = wibox.layout.fixed.vertical
+                },
+                layout = wibox.layout.flex.vertical
+            },
             cpugraph0,
             membar,
             layout = wibox.layout.flex.horizontal
