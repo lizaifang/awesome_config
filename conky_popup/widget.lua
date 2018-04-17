@@ -37,7 +37,9 @@ function markup.bg(color, text)
 end
 
 local function join_plus_sort(modifiers)
-    if #modifiers < 1 then return "none" end
+    if #modifiers < 1 then
+        return "none"
+    end
     table.sort(modifiers)
     return table.concat(modifiers, '+')
 end
@@ -185,7 +187,9 @@ function widget.new(args)
 
 
     function widget_instance:_load_widget_settings()
-        if self._widget_settings_loaded then return end
+        if self._widget_settings_loaded then
+            return
+        end
         self.width = args.width or dpi(1200)
         self.height = args.height or dpi(800)
         self.bg = args.bg or beautiful.hotkeys_bg or beautiful.bg_normal
@@ -211,9 +215,9 @@ function widget.new(args)
         s = get_screen(s)
         local wa = s.workarea
         local height = (self.height < wa.height) and self.height or
-                (wa.height - self.border_width * 2)
+        (wa.height - self.border_width * 2)
         local width = (self.width < wa.width) and self.width or
-                (wa.width - self.border_width * 2)
+        (wa.width - self.border_width * 2)
 
         -- arrange hotkey groups into columns
         local line_height = beautiful.get_font_height(self.font)
@@ -234,7 +238,7 @@ function widget.new(args)
             local add_new_column = true
             for i, column in ipairs(column_layouts) do
                 if ((column.height_px + items_height) < max_height_px) or
-                        (i == #column_layouts and column.height_px < max_height_px / 2) then
+                (i == #column_layouts and column.height_px < max_height_px / 2) then
                     current_column = column
                     add_new_column = false
                     available_height_px = max_height_px - current_column.height_px
@@ -257,42 +261,42 @@ function widget.new(args)
                 current_column = { layout = wibox.layout.fixed.vertical() }
             end
             --            current_column.layout:add(self:_group_label(group))
---
---            local function insert_keys(_keys, _add_new_column)
---                local max_label_width = 0
---                local max_label_content = ""
---                local joined_labels = ""
---                for i, key in ipairs(_keys) do
---                    local length = string.len(key.key or '') + string.len(key.description or '')
---                    local modifiers = key.mod
---                    if not modifiers or modifiers == "none" then
---                        modifiers = ""
---                    else
---                        length = length + string.len(modifiers) + 1 -- +1 for "+" character
---                        modifiers = markup.fg(self.modifiers_fg, modifiers .. "+")
---                    end
---                    local rendered_hotkey = markup.font(self.font,
---                        modifiers .. (key.key or "") .. " ") .. markup.font(self.description_font,
---                        key.description or "")
---                    if length > max_label_width then
---                        max_label_width = length
---                        max_label_content = rendered_hotkey
---                    end
---                    joined_labels = joined_labels .. rendered_hotkey .. (i ~= #_keys and "\n" or "")
---                end
---                current_column.layout:add(wibox.widget.textbox(joined_labels))
---                local max_width, _ = wibox.widget.textbox(max_label_content):get_preferred_size(s)
---                max_width = max_width + self.group_margin
---                if not current_column.max_width or max_width > current_column.max_width then
---                    current_column.max_width = max_width
---                end
---                -- +1 for group label:
---                current_column.height_px = (current_column.height_px or 0) +
---                        gstring.linecount(joined_labels) * line_height + group_label_height
---                if _add_new_column then
---                    table.insert(column_layouts, current_column)
---                end
---            end
+            --
+            --            local function insert_keys(_keys, _add_new_column)
+            --                local max_label_width = 0
+            --                local max_label_content = ""
+            --                local joined_labels = ""
+            --                for i, key in ipairs(_keys) do
+            --                    local length = string.len(key.key or '') + string.len(key.description or '')
+            --                    local modifiers = key.mod
+            --                    if not modifiers or modifiers == "none" then
+            --                        modifiers = ""
+            --                    else
+            --                        length = length + string.len(modifiers) + 1 -- +1 for "+" character
+            --                        modifiers = markup.fg(self.modifiers_fg, modifiers .. "+")
+            --                    end
+            --                    local rendered_hotkey = markup.font(self.font,
+            --                        modifiers .. (key.key or "") .. " ") .. markup.font(self.description_font,
+            --                        key.description or "")
+            --                    if length > max_label_width then
+            --                        max_label_width = length
+            --                        max_label_content = rendered_hotkey
+            --                    end
+            --                    joined_labels = joined_labels .. rendered_hotkey .. (i ~= #_keys and "\n" or "")
+            --                end
+            --                current_column.layout:add(wibox.widget.textbox(joined_labels))
+            --                local max_width, _ = wibox.widget.textbox(max_label_content):get_preferred_size(s)
+            --                max_width = max_width + self.group_margin
+            --                if not current_column.max_width or max_width > current_column.max_width then
+            --                    current_column.max_width = max_width
+            --                end
+            --                -- +1 for group label:
+            --                current_column.height_px = (current_column.height_px or 0) +
+            --                        gstring.linecount(joined_labels) * line_height + group_label_height
+            --                if _add_new_column then
+            --                    table.insert(column_layouts, current_column)
+            --                end
+            --            end
 
             --            insert_keys(keys, add_new_column)
             --            if overlap_leftovers then
@@ -353,7 +357,7 @@ function widget.new(args)
         dateicon = wibox.widget.imagebox()
         dateicon:set_image(beautiful.widget_date)
         dateicon = wibox.widget {
-            image  = beautiful.widget_date,
+            image = beautiful.widget_date,
             resize = false,
             resize_allowed = false,
             forced_height = 16,
@@ -371,8 +375,8 @@ function widget.new(args)
 
         netwidget = wibox.widget.textbox()
         vicious.register(netwidget, vicious.widgets.net, 'wlp3s0 rx: <span color="'
-                .. "#FF5656" .. '">${wlp3s0 down_kb}/s</span> wlp3s0 tx: <span color="'
-                .. "#88A175" .. '">${wlp3s0 up_kb}/s</span>', 3)
+        .. "#FF5656" .. '">${wlp3s0 down_kb}/s</span> wlp3s0 tx: <span color="'
+        .. "#88A175" .. '">${wlp3s0 up_kb}/s</span>', 3)
 
 
         --- 1st value as state of requested battery
@@ -384,15 +388,15 @@ function widget.new(args)
         cputext = wibox.widget {
             widget = wibox.widget.textbox
         }
-        
+
         -- vicious.register(cputext, vicious.widgets.cpu, "$2% $3% $4% $5%", 3)
 
         memwidget = wibox.widget.textbox()
 
         diowidget = wibox.widget.textbox()
         vicious.register(diowidget, vicious.widgets.dio, 'sda w: <span color="'
-                .. "#FF5656" .. '">${sda write_kb}/s</span> sda r: <span color="'
-                .. "#88A175" .. '">${sda read_kb}/s</span>', 3)
+        .. "#FF5656" .. '">${sda write_kb}/s</span> sda r: <span color="'
+        .. "#88A175" .. '">${sda read_kb}/s</span>', 3)
 
         datewidget = wibox.widget.textbox()
         vicious.register(datewidget, vicious.widgets.date, '<span color="#D7D3C5"> %a  %Y-%m-%d %H:%M </span>', 5)
@@ -407,12 +411,12 @@ function widget.new(args)
             step_shape = function(cr, width, height)
                 gears.shape.rounded_rect(cr, width, height, 2)
             end,
-            direction     = 'east',
+            direction = 'east',
             widget = wibox.widget.graph
         }
         -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
 
-        
+
         --- ${color D7D3C5}$acpitemp 'C
         --- ${color}|Processes:${color D7D3C5}  $running_processes|$processes
 
@@ -421,21 +425,21 @@ function widget.new(args)
         --- ${color}${cpugraph cpu1 13,36 AEA08E 9F907D} ${color}${cpugraph cpu3 13,36 AEA08E 9F907D}
 
         --- ${color}|Mem: ${color D7D3C5} ${color}${membar 2,64}${color D7D3C5}
-        
+
         --- ${battery_percent BAT0}% ${battery_bar 2,64 BAT0}
 
         --- ${color}${upspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090} ${color}${downspeedgraph wlp3s0 13,36 AEA08E 9F907D}${color 909090}
-        
+
         --- ${color}${diskiograph_read 13,36 AEA08E 9F907D}${color 909090} ${color}${diskiograph_write 13,36 AEA08E 9F907D}${color 909090}
 
 
         -- Takes an (optional) argument which, if true, includes remote file systems, only local file systems are included by default
         -- Returns a table with string keys, using mount points as a base: {/ size_mb}, {/ size_gb}, {/ used_mb}, {/ used_gb}, {/ used_p}, {/ avail_mb}, {/ avail_gb}, {/ avail_p}, {/home size_mb} etc.
 
---        fstext = wibox.widget.textbox()
---        vicious.register(fswidet, vicious.widgets.fs, '/ : <span color="'
---                .. "#FF5656" .. '">${/ size_gb}/s</span> sda r: <span color="'
---                .. "#88A175" .. '">${/ size_}/ avail_gb</span>', 3)
+        --        fstext = wibox.widget.textbox()
+        --        vicious.register(fswidet, vicious.widgets.fs, '/ : <span color="'
+        --                .. "#FF5656" .. '">${/ size_gb}/s</span> sda r: <span color="'
+        --                .. "#88A175" .. '">${/ size_}/ avail_gb</span>', 3)
 
         -- fsbarwidget = wibox.widget.progressbar()
 
@@ -448,22 +452,22 @@ function widget.new(args)
         --     widget        = wibox.widget.progressbar,
         -- }
         -- vicious.register(fsbar, vicious.widgets.fs, '$2', 3)
---        vicious.register(fsbar, vicious.widgets.fs, '${/ used_p}', 3)
+        --        vicious.register(fsbar, vicious.widgets.fs, '${/ used_p}', 3)
 
         fswidget = wibox.widget.textbox()
         vicious.register(fswidget, vicious.widgets.fs, 'sda : <span color="'
-                .. "#FF5656" .. '">${/ size_gb}GB</span>/ <span color="'
-                .. "#88A175" .. '">${/ avail_mb}MB</span>', 3)
+        .. "#FF5656" .. '">${/ size_gb}GB</span>/ <span color="'
+        .. "#88A175" .. '">${/ avail_mb}MB</span>', 3)
 
         fswidget2 = wibox.widget.textbox()
         vicious.register(fswidget2, vicious.widgets.fs, 'tmp : <span color="'
-                .. "#FF5656" .. '">${/tmp size_gb}GB</span> / <span color="'
-                .. "#88A175" .. '">${/tmp avail_mb}MB</span>', 3)
+        .. "#FF5656" .. '">${/tmp size_gb}GB</span> / <span color="'
+        .. "#88A175" .. '">${/tmp avail_mb}MB</span>', 3)
 
         fswidget3 = wibox.widget.textbox()
         vicious.register(fswidget3, vicious.widgets.fs, 'sdb : <span color="'
-                .. "#FF5656" .. '">${/media/sdb1 size_gb}GB</span> / <span color="'
-                .. "#88A175" .. '">${/media/sdb1 avail_mb}MB</span>', 3)
+        .. "#FF5656" .. '">${/media/sdb1 size_gb}GB</span> / <span color="'
+        .. "#88A175" .. '">${/media/sdb1 avail_mb}MB</span>', 3)
 
         ostext = wibox.widget.textbox()
         -- vicious.register(ostext, vicious.widgets.os, '$1 $2 $3 $4 $5 $6%', 3)
@@ -472,29 +476,29 @@ function widget.new(args)
 
         thermaltext = wibox.widget.textbox()
         vicious.register(thermaltext, vicious.widgets.thermal, '$1 $2 $3 $4', 3)
-        
+
 
         uptimetext = wibox.widget.textbox()
         vicious.register(uptimetext, vicious.widgets.uptime, 'Uptime: $1d $2h $3m Load: $4 $5 $6', 3)
-        
+
 
         wifitext = wibox.widget.textbox()
         vicious.register(wifitext, vicious.widgets.wifi("wlp3s0"), 'Wifi: ${ssid}, ${mode}, ${chan}, ${rate}, ${link}, ${linp}% ${sign}', 3)
 
-       -- memrow:add(fsbar)
-        
---        memrow:add(wibox.widget {
---                value              = 0.5,
---                max_value          = 1,
---                min_value          = 0,
---                widget             = wibox.container.radialprogressbar
---            })
+        -- memrow:add(fsbar)
+
+        --        memrow:add(wibox.widget {
+        --                value              = 0.5,
+        --                max_value          = 1,
+        --                min_value          = 0,
+        --                widget             = wibox.container.radialprogressbar
+        --            })
         cpuarctext = wibox.widget {
-                text   = math.pi/2,
-                align  = "center",
-                valign = "center",
-                widget = wibox.widget.textbox,
-            }
+            text = math.pi / 2,
+            align = "center",
+            valign = "center",
+            widget = wibox.widget.textbox,
+        }
         cpuarc = wibox.widget {
             cpuarctext,
             colors = {
@@ -503,25 +507,25 @@ function widget.new(args)
                 beautiful.border_color,
             },
             -- value = 30,
-            max_value    = 100,
-            min_value    = 0,
+            max_value = 100,
+            min_value = 0,
             rounded_edge = false,
-            bg           = "#ff000033",
-            start_angle  = math.pi/2,
+            bg = "#ff000033",
+            start_angle = math.pi / 2,
             border_width = 2,
             forced_width = 100,
             forced_height = 100,
---            opacity
---            thickness = 10,
+            --            opacity
+            --            thickness = 10,
             border_color = "#ff000033",
-            widget       = wibox.container.arcchart,
+            widget = wibox.container.arcchart,
             set_value = function(self, value)
                 self.value = tonumber(value)
             end,
         }
 
         batarctext = wibox.widget {
-            align  = "center",
+            align = "center",
             valign = "center",
             widget = wibox.widget.textbox,
         }
@@ -533,19 +537,19 @@ function widget.new(args)
                 "#0088A175",
             },
             -- value = 30,
-            max_value    = 100,
-            min_value    = 0,
+            max_value = 100,
+            min_value = 0,
             rounded_edge = false,
             -- bg           = "#ff000033",
-            bg           = "#0088A175",
-            start_angle  = math.pi/2,
+            bg = "#0088A175",
+            start_angle = math.pi / 2,
             border_width = 2,
             forced_width = 100,
             forced_height = 100,
---            opacity
---            thickness = 10,
+            --            opacity
+            --            thickness = 10,
             border_color = "#ff000033",
-            widget       = wibox.container.arcchart,
+            widget = wibox.container.arcchart,
             set_value = function(self, value)
                 self.value = tonumber(value)
             end,
@@ -554,14 +558,14 @@ function widget.new(args)
 
         -- vicious.register(batwidget, vicious.widgets.bat, "bat: $1 $2%", 61, "BAT0")
         vicious.register(batwidget, vicious.widgets.bat,
-        function (widget, args)
+        function(widget, args)
             batarc:set_value(args[2])
             batarctext:set_text(string.format("Bat: %02d%%", args[2]))
             return string.format("Battery: %s %02d%%", args[1], args[2])
         end, 31, "BAT0")
 
         memarctext = wibox.widget {
-            align  = "center",
+            align = "center",
             valign = "center",
             widget = wibox.widget.textbox,
         }
@@ -573,18 +577,18 @@ function widget.new(args)
                 beautiful.border_color,
             },
             -- value = 30,
-            max_value    = 100,
-            min_value    = 0,
+            max_value = 100,
+            min_value = 0,
             rounded_edge = false,
-            bg           = "#00ff5656",
-            start_angle  = math.pi/2,
+            bg = "#00ff5656",
+            start_angle = math.pi / 2,
             border_width = 3,
             forced_width = 200,
             forced_height = 200,
---            opacity
---            thickness = 10,
+            --            opacity
+            --            thickness = 10,
             border_color = "#ff000033",
-            widget       = wibox.container.arcchart,
+            widget = wibox.container.arcchart,
             set_value = function(self, value)
                 self.value = tonumber(value)
             end,
@@ -600,7 +604,7 @@ function widget.new(args)
         --- 8th as free swap and 9th as memory usage with buffers and cache
         vicious.cache(vicious.widgets.mem)
         vicious.register(memwidget, vicious.widgets.mem,
-        function (widget, args)
+        function(widget, args)
             memarc:set_value(args[1])
             memarctext:set_text(string.format("Mem: %02d%%", args[1]))
             return string.format("Mem: %02d%% %2dMB Swap: %02d%% %2dMB", args[1], args[2], args[5], args[6])
@@ -608,142 +612,144 @@ function widget.new(args)
         end, 3)
 
 
-    local cal = wibox.widget {
-        date         = os.date('*t'),
-        font         = 'Monospace 12',
-        spacing      = 2,
-        week_numbers = true,
-        start_sunday = false,
-        long_weekdays = true,
-        widget       = wibox.widget.calendar.month
-    }
+        local cal = wibox.widget {
+            date = os.date('*t'),
+            font = 'Monospace 12',
+            spacing = 2,
+            week_numbers = true,
+            start_sunday = false,
+            long_weekdays = true,
+            widget = wibox.widget.calendar.month
+        }
 
-    ctext = wibox.widget.textbox()
-    cgraph = wibox.widget {
-        ctext,
-        max_value = 100,
-        background_color = "#494B4F",
-        stack = true,
-        width = 100,
-        height = 60,
-        stack_colors = { "#FF5656", "#88A175", "#AECF96" },
-        widget = wibox.widget.graph
-    }
+        --[[
+            ctext = wibox.widget.textbox()
+            cgraph = wibox.widget {
+                ctext,
+                max_value = 100,
+                background_color = "#494B4F",
+                stack = true,
+                width = 100,
+                height = 60,
+                stack_colors = { "#FF5656", "#88A175", "#AECF96" },
+                widget = wibox.widget.graph
+            }
+        --]]
 
-    --- 1st value as usage of all CPUs/cores
-    --- 2nd as usage of first CPU/core
-    --- 3rd as usage of second CPU/core etc.
-    --- cpuwidget = wibox.widget.textbox()
-    --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
-    -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
-    -- vicious.register(cpuarc, vicious.widgets.cpu, "$2", 3)
-    -- vicious.register(cpuarctext, vicious.widgets.cpu, "$2", 3)
-    -- vicious.register(cputext, vicious.widgets.cpu, "$2% $3% $4% $5%", 3)
-    vicious.cache(vicious.widgets.cpu)
-    vicious.register(cputext, vicious.widgets.cpu,
-      function (widget, args)
-        cpuarc:set_value(args[1])
-        cpuarctext:set_text(string.format("CPU: %02d%%", args[1]))
-        -- cpuwidget:add_value(args[1])
-        ctext:set_text(args[1])
-        -- cgraph:add_value(args[2], 1) -- Core 1, color 1
-        -- cgraph:add_value(args[3], 2) -- Core 2, color 2
-        -- cgraph:add_value(args[4], 3) -- Core 3, color 3
-        return string.format("CPU: %02d%% %02d%% %02d%% %02d%%", args[2], args[3], args[4], args[5])
-      end, 3)
-    
+        --- 1st value as usage of all CPUs/cores
+        --- 2nd as usage of first CPU/core
+        --- 3rd as usage of second CPU/core etc.
+        --- cpuwidget = wibox.widget.textbox()
+        --- cpuwidget = wibox.widget.progressbar(wibox.container.rotate)
+        -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
+        -- vicious.register(cpuarc, vicious.widgets.cpu, "$2", 3)
+        -- vicious.register(cpuarctext, vicious.widgets.cpu, "$2", 3)
+        -- vicious.register(cputext, vicious.widgets.cpu, "$2% $3% $4% $5%", 3)
+        vicious.cache(vicious.widgets.cpu)
+        vicious.register(cputext, vicious.widgets.cpu,
+        function(widget, args)
+            cpuarc:set_value(args[1])
+            cpuarctext:set_text(string.format("CPU: %02d%%", args[1]))
+            -- cpuwidget:add_value(args[1])
+            -- ctext:set_text(args[1])
+            -- cgraph:add_value(args[2], 1) -- Core 1, color 1
+            -- cgraph:add_value(args[3], 2) -- Core 2, color 2
+            -- cgraph:add_value(args[4], 3) -- Core 3, color 3
+            return string.format("CPU: %02d%% %02d%% %02d%% %02d%%", args[2], args[3], args[4], args[5])
+        end, 3)
 
-    mtext = wibox.widget.textbox()
-    mgraph = wibox.widget {
-        mtext,
-        max_value = 100,
-        background_color = "#494B4F",
-        -- border_color = beautiful.bg_widget,
-        stack = true,
-        width = 120,
-        height = 60,
-        stack_colors = { "#FF5656", "#88A175", "#AECF96" },
-        widget = wibox.widget.graph
-    }
-    -- vicious.register(mtext, vicious.widgets.mem,
-    --   function (widget, args)
-    --     mtext:set_text(args[1])
-    --     mgraph:add_value(args[1], 1)
-    --     mgraph:add_value(args[5], 2)
-    --     return args[1]
-    --   end, 3)
-    memrow = wibox.widget {
-        ostext,
-        datewidget,
-        cputext,
-        memwidget,
-        batwidget,
-        netwidget,
-        diowidget,
-        thermaltext,
-        uptimetext,
-        wifitext,
-        fswidget,
-        fswidget3,
-        fswidget2,
-        -- layout = wibox.layout.flex.vertical
-        layout = wibox.layout.flex.vertical
-    }
 
-cpugraph0 = wibox.widget {
-    wibox.widget {
-        cpuarc,
-        batarc,
-        memarc,
-        layout = wibox.layout.flex.horizontal
-    },
-    -- cgraph,
-    -- mgraph,
-    wibox.widget {
-        layout = wibox.layout.flex.vertical
-    },
-    layout = wibox.layout.flex.vertical
-}
--- cpugraph0:set_width(120):set_height(20)
--- -- cpugraph0:set_border_color(nil)
--- -- cpugraph0:set_border_color(beautiful.bg_widget)
--- -- cpugraph0:set_background_color(beautiful.bg_widget)
--- cpugraph0:set_color({
---   type = "linear",
---   from = { 0, 120 },
---   to = { 0, 0 },
---   stops = {
---     { 0, beautiful.fg_widget },
---     { 0.25, beautiful.fg_center_widget },
---     { 1, beautiful.fg_end_widget }
---   }
--- })
--- vicious.register(cpugraph0, vicious.widgets.cpu, "$2", 3)
+        mtext = wibox.widget.textbox()
+        mgraph = wibox.widget {
+            mtext,
+            max_value = 100,
+            background_color = "#494B4F",
+            -- border_color = beautiful.bg_widget,
+            stack = true,
+            width = 120,
+            height = 60,
+            stack_colors = { "#FF5656", "#88A175", "#AECF96" },
+            widget = wibox.widget.graph
+        }
+        -- vicious.register(mtext, vicious.widgets.mem,
+        --   function (widget, args)
+        --     mtext:set_text(args[1])
+        --     mgraph:add_value(args[1], 1)
+        --     mgraph:add_value(args[5], 2)
+        --     return args[1]
+        --   end, 3)
+        memrow = wibox.widget {
+            ostext,
+            datewidget,
+            cputext,
+            memwidget,
+            batwidget,
+            netwidget,
+            diowidget,
+            thermaltext,
+            uptimetext,
+            wifitext,
+            fswidget,
+            fswidget3,
+            fswidget2,
+            -- layout = wibox.layout.flex.vertical
+            layout = wibox.layout.flex.vertical
+        }
 
-membar = wibox.widget {
-    cal,
-    wibox.widget {
-        layout = wibox.layout.flex.vertical
-    },
-    layout = wibox.layout.flex.vertical
-}
--- membar:set_vertical(false)
--- membar:set_width(120)
--- membar:set_height(120)
--- membar:set_ticks(false):set_ticks_size(2)
--- membar:set_border_color(nil)
--- membar:set_background_color(beautiful.bg_widget)
--- membar:set_color({
---   type = "linear",
---   from = { 0, 0 },
---   to = { 120, 0 },
---   stops = {
---     { 0, beautiful.fg_widget },
---     { 0.25, beautiful.fg_center_widget },
---     { 1, beautiful.fg_end_widget }
---   }
--- })
--- vicious.register(membar, vicious.widgets.mem, "$1", 3)
+        cpugraph0 = wibox.widget {
+            wibox.widget {
+                cpuarc,
+                batarc,
+                memarc,
+                layout = wibox.layout.flex.horizontal
+            },
+            -- cgraph,
+            -- mgraph,
+            wibox.widget {
+                layout = wibox.layout.flex.vertical
+            },
+            layout = wibox.layout.flex.vertical
+        }
+        -- cpugraph0:set_width(120):set_height(20)
+        -- -- cpugraph0:set_border_color(nil)
+        -- -- cpugraph0:set_border_color(beautiful.bg_widget)
+        -- -- cpugraph0:set_background_color(beautiful.bg_widget)
+        -- cpugraph0:set_color({
+        --   type = "linear",
+        --   from = { 0, 120 },
+        --   to = { 0, 0 },
+        --   stops = {
+        --     { 0, beautiful.fg_widget },
+        --     { 0.25, beautiful.fg_center_widget },
+        --     { 1, beautiful.fg_end_widget }
+        --   }
+        -- })
+        -- vicious.register(cpugraph0, vicious.widgets.cpu, "$2", 3)
+
+        membar = wibox.widget {
+            cal,
+            wibox.widget {
+                layout = wibox.layout.flex.vertical
+            },
+            layout = wibox.layout.flex.vertical
+        }
+        -- membar:set_vertical(false)
+        -- membar:set_width(120)
+        -- membar:set_height(120)
+        -- membar:set_ticks(false):set_ticks_size(2)
+        -- membar:set_border_color(nil)
+        -- membar:set_background_color(beautiful.bg_widget)
+        -- membar:set_color({
+        --   type = "linear",
+        --   from = { 0, 0 },
+        --   to = { 120, 0 },
+        --   stops = {
+        --     { 0, beautiful.fg_widget },
+        --     { 0.25, beautiful.fg_center_widget },
+        --     { 1, beautiful.fg_end_widget }
+        --   }
+        -- })
+        -- vicious.register(membar, vicious.widgets.mem, "$1", 3)
 
         columns = wibox.widget {
             wibox.widget {
@@ -758,16 +764,16 @@ membar = wibox.widget {
             layout = wibox.layout.flex.horizontal
         }
 
---        columns:add(datewidget)
+        --        columns:add(datewidget)
         --- columns:add(fsicon)
---        columns:add(diowidget)
+        --        columns:add(diowidget)
         --- columns:add(separator)
         --- columns:add(neticon)
---        columns:add(netwidget)
+        --        columns:add(netwidget)
         --- columns:add(netupicon)
         --- columns:add(separator)
         --- columns:add(cpuicon)
---        columns:add(cpuwidget)
+        --        columns:add(cpuwidget)
         --- columns:add(separator)
         -- columns:add(memicon)
         -- columns:add(memrow)
@@ -775,11 +781,11 @@ membar = wibox.widget {
         -- columns:add(membar)
         --- columns:add(separator)
         --- columns:add(baticon)
---        columns:add(batwidget)
---        columns:add(dateicon)
+        --        columns:add(batwidget)
+        --        columns:add(dateicon)
 
 
---        columns:add(rows)
+        --        columns:add(rows)
         table.insert(pages, columns)
 
         local mywibox = wibox({
@@ -798,20 +804,28 @@ membar = wibox.widget {
             height = height,
         })
         mywibox:set_widget(columns)
-        mywibox:buttons(gtable.join(awful.button({}, 1, function() mywibox.visible = false end),
-            awful.button({}, 3, function() mywibox.visible = false end)))
+        mywibox:buttons(gtable.join(awful.button({}, 1, function()
+            mywibox.visible = false
+        end),
+        awful.button({}, 3, function()
+            mywibox.visible = false
+        end)))
 
         local widget_obj = {}
         widget_obj.current_page = 1
         widget_obj.wibox = mywibox
         function widget_obj.page_next(_self)
-            if _self.current_page == #pages then return end
+            if _self.current_page == #pages then
+                return
+            end
             _self.current_page = _self.current_page + 1
             _self.wibox:set_widget(pages[_self.current_page])
         end
 
         function widget_obj.page_prev(_self)
-            if _self.current_page == 1 then return end
+            if _self.current_page == 1 then
+                return
+            end
             _self.current_page = _self.current_page - 1
             _self.wibox:set_widget(pages[_self.current_page])
         end
@@ -854,7 +868,9 @@ membar = wibox.widget {
                     end
                 end
             end
-            if not need_match then table.insert(available_groups, group) end
+            if not need_match then
+                table.insert(available_groups, group)
+            end
         end
 
         local joined_groups = join_plus_sort(available_groups)
@@ -868,7 +884,9 @@ membar = wibox.widget {
         help_wibox:show()
 
         return capi.keygrabber.run(function(_, key, event)
-            if event == "release" then return end
+            if event == "release" then
+                return
+            end
             if key then
                 if key == "Next" then
                     help_wibox:page_next()
